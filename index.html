@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhishCheck - Verificador de Links</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main class="container">
+    <header class="header">
+      <h1>🔎 PhishCheck</h1>
+      <p>Cole o link suspeito abaixo para analisar possíveis sinais de fraude.</p>
+    </header>
+
+    <section class="search-box">
+      <input type="text" id="urlInput" placeholder="Ex: https://promocao-especial-loja.com">
+      <button onclick="analisarLink()">Analisar Link</button>
+    </section>
+
+    <section id="resultCard" class="result-card hidden">
+      <h2 id="statusTitle"></h2>
+      <ul id="alertList"></ul>
+    </section>
+  </main>
+
+  <script>
+    function analisarLink() {
+      const url = document.getElementById('urlInput').value.trim().toLowerCase();
+      const resultCard = document.getElementById('resultCard');
+      const statusTitle = document.getElementById('statusTitle');
+      const alertList = document.getElementById('alertList');
+
+      alertList.innerHTML = '';
+      
+      if (!url) {
+        alert('Por favor, digite ou cole uma URL!');
+        return;
+      }
+
+      let score = 0;
+      let alertas = [];
+
+      // 1. Termos apelativos na URL
+      const palavrasSuspeitas = ['gratis', 'premio', 'ganhe', 'cupom', 'urgente', 'promocao', 'vaga'];
+      palavrasSuspeitas.forEach(termo => {
+        if (url.includes(termo)) {
+          score += 2;
+          alertas.push(`Contém palavra apelativa: "${termo}"`);
+        }
+      });
+
+      // 2. Imitando marcas conhecidas (Typosquatting)
+      if (url.includes('mercadolivre') && !url.includes('mercadolivre.com.br')) {
+        score += 4;
+        alertas.push('Tentativa de se passar pelo Mercado Livre com domínio falso.');
+      }
+      if (url.includes('banco') && !url.includes('.com.br')) {
+        score += 3;
+        alertas.push('Link de suposta instituição bancária sem o domínio oficial .com.br.');
+      }
+
+      // 3. Domínios de baixo custo/suspeitos
+      const extensoesSuspeitas = ['.xyz', '.top', '.site', '.online', '.tech'];
+      extensoesSuspeitas.forEach(ext => {
+        if (url.includes(ext)) {
+          score += 2;
+          alertas.push(`Usa extensão de domínio incomum para sites oficiais (${ext}).`);
+        }
+      });
+
+      // 4. Ausência de HTTPS
+      if (url.startsWith('http://')) {
+        score += 2;
+        alertas.push('Conexão não segura (HTTP em vez de HTTPS).');
+      }
+
+      // Exibição dos resultados
+      resultCard.classList.remove('hidden', 'safe', 'warning', 'danger');
+
+      if (score === 0) {
+        resultCard.classList.add('safe');
+        statusTitle.textContent = '✅ Link Parece Seguro';
+        alertList.innerHTML = '<li>Nenhum sinal óbvio de golpe encontrado. Mesmo assim, nunca informe senhas ou dados bancários em links recebidos por mensagem.</li>';
+      } else if (score < 4) {
+        resultCard.classList.add('warning');
+        statusTitle.textContent = '⚠️ Link Suspeito';
+        alertas.forEach(a => alertList.innerHTML += `<li>${a}</li>`);
+      } else {
+        resultCard.classList.add('danger');
+        statusTitle.textContent = '🚨 Alto Risco de Fraude!';
+        alertas.forEach(a => alertList.innerHTML += `<li>${a}</li>`);
+      }
+    }
+  </script>
+</body>
+</html>
