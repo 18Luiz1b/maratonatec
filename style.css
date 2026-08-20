@@ -1,0 +1,130 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f4f6f9;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  max-width: 520px;
+  width: 100%;
+}
+
+.header h1 {
+  color: #1a73e8;
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+}
+
+.header p {
+  color: #5f6368;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+}
+
+/* ESTILIZAÇÃO DO ESPAÇO DE ENTRADA DO LINK */
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.input-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #3c4043;
+}
+
+.input-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.input-wrapper input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #dadce0;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-wrapper input:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+}
+
+.input-wrapper button {
+  padding: 12px 20px;
+  background-color: #1a73e8;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.input-wrapper button:hover {
+  background-color: #1557b0;
+}
+
+/* CARTÃO DE RESULTADO */
+.result-card {
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 6px solid;
+}
+
+.result-card.safe {
+  background-color: #e6f4ea;
+  border-color: #34a853;
+  color: #137333;
+}
+
+.result-card.warning {
+  background-color: #fef7e0;
+  border-color: #fbbc04;
+  color: #b06000;
+}
+
+.result-card.danger {
+  background-color: #fce8e6;
+  border-color: #ea4335;
+  color: #c5221f;
+}
+
+.result-card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 10px;
+}
+
+.result-card ul {
+  padding-left: 20px;
+}
+
+.result-card li {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.hidden {
+  display: none;
+}
