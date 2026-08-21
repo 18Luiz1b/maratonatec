@@ -32,74 +32,79 @@ function falarResultado(mensagem) {
     }
 }
 
-// 3. Lógica de Acesso Técnico e Explicação Real
+// 3. Lógica de Verificação Rápida com Explicação
 function verificarLink() {
-    const link = document.getElementById("input-link").value.trim().toLowerCase();
+    const linkInput = document.getElementById("input-link");
     const divResultado = document.getElementById("resultado");
+
+    if (!linkInput) {
+        alert("Erro técnico: Campo de entrada não encontrado.");
+        return;
+    }
+
+    const link = linkInput.value.trim().toLowerCase();
 
     if (link === "") {
         alert("Por favor, cole ou digite um link primeiro!");
         return;
     }
 
-    // Mostra uma mensagem de carregamento rápido simulando o acesso ao servidor do link
+    // Estado de Carregamento (Simula o acesso rápido ao link)
     divResultado.classList.remove("oculta", "seguro", "perigoso");
     divResultado.style.backgroundColor = "#FFF3CD";
     divResultado.style.color = "#856404";
     divResultado.style.border = "3px solid #FFC107";
-    divResultado.innerHTML = "🔄 Acessando o servidor do link e analisando o código-fonte rapidamente... Aguarde.";
+    divResultado.innerHTML = "🔄 Acessando o link e analisando a segurança do servidor... Aguarde.";
 
-    // Aguarda 1.5 segundos para simular a varredura técnica e trazer a explicação
+    // Executa a resposta técnica após 1.2 segundos
     setTimeout(() => {
-        divResultado.classList.remove("seguro", "perigoso");
         divResultado.removeAttribute("style"); // Limpa estilos temporários
+        divResultado.classList.remove("seguro", "perigoso");
 
-        const palavrasSuspeitas = ["promocao", "premio", "gratis", "urgente", "banco", "atualize", "cpf", "desconto", "ganhe", "sorteio", "vaga"];
+        const palavrasSuspeitas = ["promocao", "premio", "gratis", "urgente", "banco", "atualize", "cpf", "desconto", "ganhe", "sorteio", "vaga", "pix"];
         let motivoFraude = "";
         let eGolpe = false;
 
-        // Análise Estrutural 1: Protocolo de Segurança SSL
+        // Regra 1: Falta de Criptografia (HTTP)
         if (!link.startsWith("https://")) {
             eGolpe = true;
-            motivoFraude = "O site não utiliza o protocolo seguro HTTPS. Isso significa que a conexão não é criptografada e qualquer dado digitado pode ser interceptado por criminosos.";
+            motivoFraude = "O site não utiliza conexão segura HTTPS. Qualquer dado digitado nele pode ser roubado facilmente por criminosos na rede.";
         } else {
-            // Análise Estrutural 2: Varredura de palavras apelativas no link
+            // Regra 2: Termos de Engenharia Social
             for (let palavra of palavrasSuspeitas) {
                 if (link.includes(palavra)) {
                     eGolpe = true;
-                    motivoFraude = `O endereço contém o termo apelativo "${palavra}". Engenharia social identificada: golpistas usam essas palavras para criar falsas promessas de ganhos rápidos e clonar páginas oficiais.`;
+                    motivoFraude = `O endereço possui o termo perigoso "${palavra}". Golpistas usam essas palavras para criar falsas promessas e atrair cliques por impulso.`;
                     break;
                 }
             }
         }
 
-        // Análise Estrutural 3: Domínios falsos comuns (Typosquatting)
+        // Regra 3: Falsificação de Marca Famosa
         if (link.includes("mercadolivre") && !link.includes("mercadolivre.com.br")) {
             eGolpe = true;
-            motivoFraude = "Tentativa de camuflagem de marca. O link usa o nome 'Mercado Livre', mas o servidor final está hospedado em um domínio falso, caracterizando uma página clonada para roubo de contas.";
+            motivoFraude = "Este link tenta usar o nome do 'Mercado Livre', mas está hospedado em um site de terceiros falsificado para clonar sua conta.";
         }
 
-        // Exibe o resultado definitivo e a explicação técnica na tela
+        // Mostra o resultado final na tela
         if (eGolpe) {
             divResultado.classList.add("perigoso");
-            const htmlResposta = `
-                <p>🚨 <strong>NÃO É CONFIAVÉL / RISCO DE GOLPE DETECTADO!</strong></p>
-                <p style="font-size: 16px; font-weight: normal; margin-top: 10px; text-align: left;">
+            divResultado.innerHTML = `
+                <p>🚨 <strong>NÃO É CONFIÁVEL / RISCO DE GOLPE!</strong></p>
+                <p style="font-size: 16px; font-weight: normal; margin-top: 10px; text-align: left; line-height: 1.4;">
                     <strong>Explicação Técnica:</strong> ${motivoFraude}
                 </p>
             `;
-            divResultado.innerHTML = htmlResposta;
             falarResultado("Cuidado! Este link possui riscos de golpe detectados. Veja a explicação na tela.");
         } else {
             divResultado.classList.add("seguro");
-            const htmlResposta = `
-                <p>✅ <strong>LINK ANALISADO E PARECE SEGURO!</strong></p>
-                <p style="font-size: 16px; font-weight: normal; margin-top: 10px; text-align: left;">
-                    <strong>Explicação Técnica:</strong> O link utiliza o protocolo HTTPS de criptografia ativa e não apresenta padrões textuais de páginas falsas ou clonadas em nosso banco de dados. Navegue com atenção.
+            divResultado.innerHTML = `
+                <p>✅ <strong>LINK VERIFICADO E PARECE SEGURO!</strong></p>
+                <p style="font-size: 16px; font-weight: normal; margin-top: 10px; text-align: left; line-height: 1.4;">
+                    <strong>Explicação Técnica:</strong> O endereço utiliza criptografia HTTPS válida e não contém termos associados a fraudes digitais conhecidas em nosso sistema.
                 </p>
             `;
-            divResultado.innerHTML = htmlResposta;
             falarResultado("O link foi verificado com sucesso e parece seguro.");
         }
-    }, 1500); // 1500 milissegundos = 1.5 segundos de carregamento técnico
+    }, 1200);
 }
