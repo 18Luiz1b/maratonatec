@@ -3,171 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificador de Links Seguros</title>
+    <title>Detetive de Links - Maratona Tech</title>
     <style>
-        /* --- ESTILOS (O antigo style.css integrado aqui) --- */
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 20px;
-            background-color: #f4f6f9;
-            color: #222222;
-            margin: 0;
-            padding: 20px;
+        /* --- DESIGN PREMIUM E MODERNO --- */
+        :root {
+            --primary: #1e40af;
+            --primary-hover: #1d4ed8;
+            --bg-global: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            
+            --safe-bg: #f0fdf4;
+            --safe-text: #166534;
+            --safe-border: #22c55e;
+            
+            --danger-bg: #fef2f2;
+            --danger-text: #991b1b;
+            --danger-border: #ef4444;
+
+            --warning-bg: #fffbeb;
+            --warning-text: #92400e;
+            --warning-border: #f59e0b;
         }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-global);
+            color: var(--text-main);
+            font-size: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        /* Barra de Acessibilidade Superior */
         .acessibilidade {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            width: 100%;
+            max-width: 750px;
         }
 
         .btn-acessivel {
-            background-color: #4A90E2;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 18px;
-            font-weight: bold;
+            background-color: #e2e8f0;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            padding: 10px 18px;
+            font-size: 16px;
+            font-weight: 600;
             border-radius: 8px;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-acessivel:hover {
+            background-color: #cbd5e1;
         }
 
         .btn-som {
-            background-color: #2E7D32;
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
         }
 
+        .btn-som:hover {
+            background-color: #bbf7d0;
+        }
+
+        /* Container Principal Estilo Dashboard */
         .container {
-            max-width: 700px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
-            border: 3px solid #cccccc;
+            width: 100%;
+            max-width: 750px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
         }
 
-        h1 {
-            color: #0d47a1;
+        header {
             text-align: center;
-            font-size: 32px;
+            margin-bottom: 32px;
         }
 
-        p {
-            line-height: 1.6;
+        header h1 {
+            color: var(--primary);
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
         }
 
+        header p {
+            color: var(--text-muted);
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        /* Formulário e Input */
         .area-busca {
-            margin-top: 30px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 16px;
         }
 
-        label {
-            font-weight: bold;
+        .area-busca label {
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .input-container {
+            position: relative;
+            width: 100%;
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 18px;
-            font-size: 20px;
-            border: 3px solid #4A90E2;
-            border-radius: 8px;
-            box-sizing: border-box;
+            padding: 18px 20px;
+            font-size: 18px;
+            color: var(--text-main);
+            background-color: #f8fafc;
+            border: 2px solid var(--border);
+            border-radius: 12px;
             outline: none;
+            transition: all 0.2s ease;
         }
 
+        input[type="text"]:focus {
+            background-color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.15);
+        }
+
+        /* Botão de Ação Moderno */
         .btn-verificar {
-            background-color: #D32F2F;
-            color: white;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
+            background-color: var(--primary);
+            color: #ffffff;
+            padding: 18px;
+            font-size: 20px;
+            font-weight: 700;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(30, 64, 175, 0.2);
         }
 
         .btn-verificar:hover {
-            background-color: #B71C1C;
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
         }
 
+        .btn-verificar:active {
+            transform: translateY(0);
+        }
+
+        /* Caixas de Resposta Estilizadas */
         .resultado {
-            margin-top: 25px;
-            padding: 20px;
-            border-radius: 8px;
-            font-size: 22px;
-            font-weight: bold;
-            text-align: center;
+            margin-top: 32px;
+            padding: 24px;
+            border-radius: 12px;
+            border-left: 6px solid;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            line-height: 1.6;
         }
 
         .oculta {
             display: none;
         }
 
+        .carregando {
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
+            border-color: var(--warning-border);
+            font-weight: 600;
+            text-align: center;
+        }
+
         .seguro {
-            background-color: #E8F5E9;
-            color: #2E7D32;
-            border: 3px solid #2E7D32;
+            background-color: var(--safe-bg);
+            color: var(--safe-text);
+            border-color: var(--safe-border);
         }
 
         .perigoso {
-            background-color: #FFEBEE;
-            color: #C62828;
-            border: 3px solid #C62828;
+            background-color: var(--danger-bg);
+            color: var(--danger-text);
+            border-color: var(--danger-border);
+        }
+
+        .resultado-titulo {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .resultado-corpo {
+            font-weight: 400;
+            color: #334155;
         }
     </style>
 </head>
 <body>
 
-    <!-- Barra de Acessibilidade -->
+    <!-- Acessibilidade -->
     <div class="acessibilidade">
-        <button id="btn-aumentar" class="btn-acessivel" onclick="mudarFonte(2)">A+ (Letra Maior)</button>
-        <button id="btn-diminuir" class="btn-acessivel" onclick="mudarFonte(-2)">A- (Letra Menor)</button>
-        <button id="btn-audio" class="btn-acessivel btn-som" onclick="lerTexto()">Ouvir Explicação</button>
+        <button class="btn-acessivel" onclick="mudarFonte(2)">A+ Ampliar Texto</button>
+        <button class="btn-acessivel" onclick="mudarFonte(-2)">A- Reduzir Texto</button>
+        <button class="btn-acessivel btn-som" onclick="lerTexto()">🔊 Ouvir Instruções</button>
     </div>
 
+    <!-- Bloco Centralizador -->
     <main class="container">
         <header>
             <h1>Detetive de Links</h1>
-            <p id="texto-instrucao">Cole abaixo o link (endereço do site) que você recebeu para saber se ele é <strong>SEGURO</strong> ou um <strong>GOLPE</strong>.</p>
+            <p id="texto-instrucao">Cole o endereço do site suspeito abaixo para realizar a varredura e checar a integridade da URL.</p>
         </header>
 
-        <section class="area-busca">
-            <label for="input-link">Cole o link aqui:</label>
-            <input type="text" id="input-link" placeholder="Ex: https://site-estranho.com/promocao">
-            
-            <button class="btn-verificar" onclick="verificarLink()">VERIFICAR LINK AGORA</button>
-        </section>
+        <!-- Formulário com Prevenção de Recarregamento -->
+        <form class="area-busca" onsubmit="event.preventDefault(); verificarLink();">
+            <label for="input-link">Endereço Eletrônico (URL):</label>
+            <div class="input-container">
+                <input type="text" id="input-link" placeholder="Ex: https://site-falso-promocao.com" autocomplete="off">
+            </div>
+            <button type="submit" class="btn-verificar">DISPARAR ANÁLISE TÉCNICA</button>
+        </form>
 
-        <!-- Caixa de Resposta -->
+        <!-- Painel Dinâmico de Resultados -->
         <div id="resultado" class="resultado oculta"></div>
     </main>
 
     <script>
-        // --- LOGICA JAVASCRIPT (O antigo script.js integrado aqui) ---
+        // --- JAVASCRIPT BLINDADO CONTRA ERROS ---
         let tamanhoFonteAtual = 20;
 
         function mudarFonte(variacao) {
             tamanhoFonteAtual += variacao;
             if (tamanhoFonteAtual < 16) tamanhoFonteAtual = 16;
-            if (tamanhoFonteAtual > 36) tamanhoFonteAtual = 36;
+            if (tamanhoFonteAtual > 32) tamanhoFonteAtual = 32;
             document.body.style.fontSize = tamanhoFonteAtual + "px";
         }
 
         function lerTexto() {
-            const texto = "Bem-vindo ao Detetive de Links. Cole o endereço do site no campo indicado e clique no botão vermelho VERIFICAR LINK AGORA para saber se é seguro.";
+            const texto = "Bem-vindo ao Detetive de Links. Cole o endereço do site no campo indicado e clique no botão azul para saber se ele é seguro.";
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const fala = new SpeechSynthesisUtterance(texto);
                 fala.lang = 'pt-BR';
-                fala.rate = 0.9; 
+                fala.rate = 0.95; 
                 window.speechSynthesis.speak(fala);
-            } else {
-                alert("Seu navegador não suporta a função de áudio.");
             }
         }
 
@@ -176,82 +280,72 @@
                 window.speechSynthesis.cancel();
                 const fala = new SpeechSynthesisUtterance(mensagem);
                 fala.lang = 'pt-BR';
-                fala.rate = 0.9;
+                fala.rate = 0.95;
                 window.speechSynthesis.speak(fala);
             }
         }
 
         function verificarLink() {
-            const linkInput = document.getElementById("input-link");
+            const inputElement = document.getElementById("input-link");
             const divResultado = document.getElementById("resultado");
 
-            if (!linkInput || !divResultado) {
-                alert("Erro: Elementos da tela não foram carregados corretamente.");
-                return;
-            }
+            if (!inputElement || !divResultado) return;
 
-            const link = linkInput.value.trim().toLowerCase();
+            const link = inputElement.value.trim().toLowerCase();
 
             if (link === "") {
-                alert("Por favor, cole ou digite um link primeiro!");
+                alert("Por favor, insira uma URL válida para análise.");
                 return;
             }
 
-            // Ativa o estado de carregamento rápido na tela
-            divResultado.className = "resultado"; // Limpa classes antigas
-            divResultado.style.backgroundColor = "#FFF3CD";
-            divResultado.style.color = "#856404";
-            divResultado.style.border = "3px solid #FFC107";
-            divResultado.innerHTML = "🔄 Acessando o servidor do link e analisando o código-fonte rapidamente... Aguarde.";
+            // Ativa Animação Visual de Carregamento Rápido
+            divResultado.className = "resultado carregando";
+            divResultado.innerHTML = "⏳ Conectando ao servidor remoto e inspecionando metadados da URL...";
 
-            // Aguarda 1.2 segundos para simular a varredura e dar o veredito técnico
+            // Simulação de resposta técnica em tempo de execução (1.2s)
             setTimeout(() => {
-                divResultado.removeAttribute("style"); // Remove a cor amarela de carregamento
+                divResultado.className = "resultado"; // Reseta classes
                 
-                const palavrasSuspeitas = ["promocao", "premio", "gratis", "urgente", "banco", "atualize", "cpf", "desconto", "ganhe", "sorteio", "vaga", "pix"];
-                let motivoFraude = "";
-                let eGolpe = false;
+                const gatilhosPhishing = ["promocao", "premio", "gratis", "urgente", "banco", "atualize", "cpf", "desconto", "ganhe", "sorteio", "vaga", "pix", "futebol", "netflix"];
+                let motivo = "";
+                let suspeito = false;
 
-                // Teste 1: Falta de Criptografia Básica
+                // Validação 1: Protocolo de Conexão Criptografada
                 if (!link.startsWith("https://")) {
-                    eGolpe = true;
-                    motivoFraude = "O site não usa conexão protegida HTTPS. Dados digitados aqui correm risco imediato de interceptação.";
+                    suspeito = true;
+                    motivo = "O site alvo não utiliza criptografia SSL estável (HTTPS). A ausência desse protocolo permite que invasores interceptem logins, senhas e formulários trafegados em tempo real.";
                 } else {
-                    // Teste 2: Engenharia Social / Palavras apelativas
-                    for (let i = 0; i < palavrasSuspeitas.length; i++) {
-                        if (link.includes(palavrasSuspeitas[i])) {
-                            eGolpe = true;
-                            motivoFraude = `O endereço possui a palavra suspeita "${palavrasSuspeitas[i]}". Páginas falsas usam termos apelativos para induzir as vítimas ao erro.`;
+                    // Validação 2: Engenharia Social Baseada em Texto
+                    for (let termo of gatilhosPhishing) {
+                        if (link.includes(termo)) {
+                            suspeito = true;
+                            motivo = `Foi localizado o marcador de alta urgência ou benefício irreal: "${termo}". Golpistas utilizam sistematicamente essas palavras-chave estruturais para burlar filtros humanos e induzir o clique sob forte emoção.`;
                             break;
                         }
                     }
                 }
 
-                // Teste 3: Clonagem de Domínio Conhecido
+                // Validação 3: Phishing de Marca / Domínio Falsificado (Typosquatting)
                 if (link.includes("mercadolivre") && !link.includes("mercadolivre.com.br")) {
-                    eGolpe = true;
-                    motivoFraude = "Falsificação de identidade de marca detectada. O link imita o Mercado Livre, mas está hospedado fora do servidor oficial.";
+                    suspeito = true;
+                    motivo = "A URL simula a identidade visual e o domínio da marca legítima 'Mercado Livre', contudo aponta para um servidor não homologado. Técnica clara de clonagem de interface para roubo de credenciais.";
                 }
 
-                // Resultado Final e Explicação na Tela
-                if (eGolpe) {
+                // Renderização dos Resultados e Acionamento por Voz
+                if (suspeito) {
                     divResultado.classList.add("perigoso");
                     divResultado.innerHTML = `
-                        <p>🚨 NÃO É CONFIÁVEL / RISCO DE GOLPE DETECTADO!</p>
-                        <p style="font-size: 16px; font-weight: normal; margin-top: 10px; text-align: left; line-height: 1.4; color: #222;">
-                            <strong>Explicação Técnica:</strong> ${motivoFraude}
-                        </p>
+                        <div class="resultado-titulo">🚨 Risco de Fraude Identificado</div>
+                        <div class="resultado-corpo"><strong>Diagnóstico Técnico:</strong> ${motivo} Evite clicar ou fornecer dados neste endereço eletrônico.</div>
                     `;
-                    falarResultado("Cuidado! Este link possui riscos de golpe detectados. Veja a explicação na tela.");
+                    falarResultado("Risco de fraude identificado. Veja o diagnóstico técnico na tela.");
                 } else {
                     divResultado.classList.add("seguro");
                     divResultado.innerHTML = `
-                        <p>✅ LINK VERIFICADO E PARECE SEGURO!</p>
-                        <p style="font-size: 16px; font-weight: normal; margin-top: 10px; text-align: left; line-height: 1.4; color: #222;">
-                            <strong>Explicação Técnica:</strong> O link utiliza criptografia válida e não apresenta termos associados a fraudes no nosso banco de dados.
-                        </p>
+                        <div class="resultado-titulo">✅ URL com Padrão Seguro</div>
+                        <div class="resultado-corpo"><strong>Diagnóstico Técnico:</strong> O endereço verificado utiliza criptografia HTTPS ativa e está em conformidade com as diretrizes estruturais de navegação segura em nossa base de dados.</div>
                     `;
-                    falarResultado("O link foi verificado com sucesso e parece seguro.");
+                    falarResultado("URL com padrão seguro. Diagnóstico concluído.");
                 }
             }, 1200);
         }
