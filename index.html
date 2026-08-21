@@ -1,107 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PhishCheck - Verificador de Links</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador de Links Seguros</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <main class="container">
-    <header class="header">
-      <h1>🔎 PhishCheck</h1>
-      <p>Verifique se um link é seguro antes de clicar.</p>
-    </header>
+    <!-- Acessibilidade: Controle de Fonte e Áudio -->
+    <div class="acessibilidade">
+        <button id="btn-aumentar" class="btn-acessivel" onclick="mudarFonte(2)">A+ (Letra Maior)</button>
+        <button id="btn-diminuir" class="btn-acessivel" onclick="mudarFonte(-2)">A- (Letra Menor)</button>
+        <button id="btn-audio" class="btn-acessivel btn-som" onclick="lerTexto()">🔊 Ouvir Explicacao</button>
+    </div>
 
-    <section class="input-section">
-      <label for="urlInput" class="input-label">Cole ou digite o link abaixo:</label>
-      <div class="input-wrapper">
-        <input 
-          type="url" 
-          id="urlInput" 
-          placeholder="https://exemplo.com/promocao" 
-          autocomplete="off"
-        >
-        <button onclick="analisarLink()">Analisar</button>
-      </div>
-    </section>
+    <main class="container">
+        <header>
+            <h1>🕵️‍♂️ Detetive de Links</h1>
+            <p id="texto-instrucao">Cole abaixo o link (endereço do site) que você recebeu para saber se ele é <strong>SEGURO</strong> ou um <strong>GOLPE</strong>.</p>
+        </header>
 
-    <section id="resultCard" class="result-card hidden">
-      <h2 id="statusTitle"></h2>
-      <ul id="alertList"></ul>
-    </section>
-  </main>
+        <section class="area-busca">
+            <label for="input-link">Cole o link aqui:</label>
+            <input type="text" id="input-link" placeholder="Ex: https://site-estranho.com/promocao">
+            
+            <button class="btn-verificar" onclick="verificarLink()">VERIFICAR LINK AGORA</button>
+        </section>
 
-  <script>
-    function analisarLink() {
-      const inputField = document.getElementById('urlInput');
-      const url = inputField.value.trim().toLowerCase();
-      const resultCard = document.getElementById('resultCard');
-      const statusTitle = document.getElementById('statusTitle');
-      const alertList = document.getElementById('alertList');
+        <!-- Resultado que vai aparecer na tela -->
+        <div id="resultado" class="resultado oculta"></div>
+    </main>
 
-      alertList.innerHTML = '';
-      
-      if (!url) {
-        alert('Por favor, cole um link no campo indicado!');
-        return;
-      }
-
-      let score = 0;
-      let alertas = [];
-
-      // Análise de termos suspeitos
-      const palavrasSuspeitas = ['gratis', 'premio', 'ganhe', 'cupom', 'urgente', 'promocao', 'vaga', 'pix'];
-      palavrasSuspeitas.forEach(termo => {
-        if (url.includes(termo)) {
-          score += 2;
-          alertas.push(`Contém palavra apelativa: "${termo}"`);
-        }
-      });
-
-      // Análise de imitação de marcas (Typosquatting)
-      if (url.includes('mercadolivre') && !url.includes('mercadolivre.com.br')) {
-        score += 4;
-        alertas.push('Tentativa de se passar pelo Mercado Livre com domínio falso.');
-      }
-      if (url.includes('banco') && !url.includes('.com.br')) {
-        score += 3;
-        alertas.push('Link de instituição bancária sem o domínio oficial registrado no Brasil.');
-      }
-
-      // Extensões de domínio incomuns
-      const extensoesSuspeitas = ['.xyz', '.top', '.site', '.online', '.tech'];
-      extensoesSuspeitas.forEach(ext => {
-        if (url.includes(ext)) {
-          score += 2;
-          alertas.push(`Usa extensão de domínio incomum para sites oficiais (${ext}).`);
-        }
-      });
-
-      // Protocolo de segurança
-      if (url.startsWith('http://')) {
-        score += 2;
-        alertas.push('Conexão não segura (HTTP em vez de HTTPS).');
-      }
-
-      // Exibição dos resultados
-      resultCard.classList.remove('hidden', 'safe', 'warning', 'danger');
-
-      if (score === 0) {
-        resultCard.classList.add('safe');
-        statusTitle.textContent = '✅ Link Parece Seguro';
-        alertList.innerHTML = '<li>Nenhum sinal óbvio de golpe encontrado. Lembre-se de nunca fornecer senhas ou dados bancários em links recebidos por mensagem.</li>';
-      } else if (score < 4) {
-        resultCard.classList.add('warning');
-        statusTitle.textContent = '⚠️ Link Suspeito';
-        alertas.forEach(a => alertList.innerHTML += `<li>${a}</li>`);
-      } else {
-        resultCard.classList.add('danger');
-        statusTitle.textContent = '🚨 Alto Risco de Fraude!';
-        alertas.forEach(a => alertList.innerHTML += `<li>${a}</li>`);
-      }
-    }
-  </script>
+    <script src="script.js"></script>
 </body>
 </html>
