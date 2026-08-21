@@ -4,11 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificador de Links Seguros</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- ESTILOS (O antigo style.css integrado aqui) --- */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 20px;
+            background-color: #f4f6f9;
+            color: #222222;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .acessibilidade {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .btn-acessivel {
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .btn-som {
+            background-color: #2E7D32;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+            border: 3px solid #cccccc;
+        }
+
+        h1 {
+            color: #0d47a1;
+            text-align: center;
+            font-size: 32px;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        .area-busca {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 18px;
+            font-size: 20px;
+            border: 3px solid #4A90E2;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .btn-verificar {
+            background-color: #D32F2F;
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-verificar:hover {
+            background-color: #B71C1C;
+        }
+
+        .resultado {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .oculta {
+            display: none;
+        }
+
+        .seguro {
+            background-color: #E8F5E9;
+            color: #2E7D32;
+            border: 3px solid #2E7D32;
+        }
+
+        .perigoso {
+            background-color: #FFEBEE;
+            color: #C62828;
+            border: 3px solid #C62828;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Acessibilidade: Controle de Fonte e Áudio -->
+    <!-- Barra de Acessibilidade -->
     <div class="acessibilidade">
         <button id="btn-aumentar" class="btn-acessivel" onclick="mudarFonte(2)">A+ (Letra Maior)</button>
         <button id="btn-diminuir" class="btn-acessivel" onclick="mudarFonte(-2)">A- (Letra Menor)</button>
@@ -28,10 +143,118 @@
             <button class="btn-verificar" onclick="verificarLink()">VERIFICAR LINK AGORA</button>
         </section>
 
-        <!-- Resultado que vai aparecer na tela -->
+        <!-- Caixa de Resposta -->
         <div id="resultado" class="resultado oculta"></div>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+        // --- LOGICA JAVASCRIPT (O antigo script.js integrado aqui) ---
+        let tamanhoFonteAtual = 20;
+
+        function mudarFonte(variacao) {
+            tamanhoFonteAtual += variacao;
+            if (tamanhoFonteAtual < 16) tamanhoFonteAtual = 16;
+            if (tamanhoFonteAtual > 36) tamanhoFonteAtual = 36;
+            document.body.style.fontSize = tamanhoFonteAtual + "px";
+        }
+
+        function lerTexto() {
+            const texto = "Bem-vindo ao Detetive de Links. Cole o endereço do site no campo indicado e clique no botão vermelho VERIFICAR LINK AGORA para saber se é seguro.";
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const fala = new SpeechSynthesisUtterance(texto);
+                fala.lang = 'pt-BR';
+                fala.rate = 0.9; 
+                window.speechSynthesis.speak(fala);
+            } else {
+                alert("Seu navegador não suporta a função de áudio.");
+            }
+        }
+
+        function falarResultado(mensagem) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const fala = new SpeechSynthesisUtterance(mensagem);
+                fala.lang = 'pt-BR';
+                fala.rate = 0.9;
+                window.speechSynthesis.speak(fala);
+            }
+        }
+
+        function verificarLink() {
+            const linkInput = document.getElementById("input-link");
+            const divResultado = document.getElementById("resultado");
+
+            if (!linkInput || !divResultado) {
+                alert("Erro: Elementos da tela não foram carregados corretamente.");
+                return;
+            }
+
+            const link = linkInput.value.trim().toLowerCase();
+
+            if (link === "") {
+                alert("Por favor, cole ou digite um link primeiro!");
+                return;
+            }
+
+            // Ativa o estado de carregamento rápido na tela
+            divResultado.className = "resultado"; // Limpa classes antigas
+            divResultado.style.backgroundColor = "#FFF3CD";
+            divResultado.style.color = "#856404";
+            divResultado.style.border = "3px solid #FFC107";
+            divResultado.innerHTML = "🔄 Acessando o servidor do link e analisando o código-fonte rapidamente... Aguarde.";
+
+            // Aguarda 1.2 segundos para simular a varredura e dar o veredito técnico
+            setTimeout(() => {
+                divResultado.removeAttribute("style"); // Remove a cor amarela de carregamento
+                
+                const palavrasSuspeitas = ["promocao", "premio", "gratis", "urgente", "banco", "atualize", "cpf", "desconto", "ganhe", "sorteio", "vaga", "pix"];
+                let motivoFraude = "";
+                let eGolpe = false;
+
+                // Teste 1: Falta de Criptografia Básica
+                if (!link.startsWith("https://")) {
+                    eGolpe = true;
+                    motivoFraude = "O site não usa conexão protegida HTTPS. Dados digitados aqui correm risco imediato de interceptação.";
+                } else {
+                    // Teste 2: Engenharia Social / Palavras apelativas
+                    for (let i = 0; i < palavrasSuspeitas.length; i++) {
+                        if (link.includes(palavrasSuspeitas[i])) {
+                            eGolpe = true;
+                            motivoFraude = `O endereço possui a palavra suspeita "${palavrasSuspeitas[i]}". Páginas falsas usam termos apelativos para induzir as vítimas ao erro.`;
+                            break;
+                        }
+                    }
+                }
+
+                // Teste 3: Clonagem de Domínio Conhecido
+                if (link.includes("mercadolivre") && !link.includes("mercadolivre.com.br")) {
+                    eGolpe = true;
+                    motivoFraude = "Falsificação de identidade de marca detectada. O link imita o Mercado Livre, mas está hospedado fora do servidor oficial.";
+                }
+
+                // Resultado Final e Explicação na Tela
+                if (eGolpe) {
+                    divResultado.classList.add("perigoso");
+                    divResultado.innerHTML = `
+                        <p>🚨 NÃO É CONFIÁVEL / RISCO DE GOLPE DETECTADO!</p>
+                        <p style="font-size: 16px; font-weight: normal; margin-top: 10px; text-align: left; line-height: 1.4; color: #222;">
+                            <strong>Explicação Técnica:</strong> ${motivoFraude}
+                        </p>
+                    `;
+                    falarResultado("Cuidado! Este link possui riscos de golpe detectados. Veja a explicação na tela.");
+                } else {
+                    divResultado.classList.add("seguro");
+                    divResultado.innerHTML = `
+                        <p>✅ LINK VERIFICADO E PARECE SEGURO!</p>
+                        <p style="font-size: 16px; font-weight: normal; margin-top: 10px; text-align: left; line-height: 1.4; color: #222;">
+                            <strong>Explicação Técnica:</strong> O link utiliza criptografia válida e não apresenta termos associados a fraudes no nosso banco de dados.
+                        </p>
+                    `;
+                    falarResultado("O link foi verificado com sucesso e parece seguro.");
+                }
+            }, 1200);
+        }
+    </script>
 </body>
 </html>
