@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detetive de Links - Maratona Tech</title>
     <style>
-        /* --- DESIGN PREMIUM E MODERNO --- */
         :root {
             --primary: #1e40af;
             --primary-hover: #1d4ed8;
@@ -38,7 +37,6 @@
         body {
             background-color: var(--bg-global);
             color: var(--text-main);
-            font-size: 20px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -83,7 +81,7 @@
             background-color: #bbf7d0;
         }
 
-        /* Container Principal Estilo Dashboard */
+        /* Container Principal */
         .container {
             width: 100%;
             max-width: 750px;
@@ -92,6 +90,8 @@
             border-radius: 20px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border);
+            font-size: 20px; /* Base escalável */
+            transition: font-size 0.2s ease;
         }
 
         header {
@@ -101,7 +101,7 @@
 
         header h1 {
             color: var(--primary);
-            font-size: 36px;
+            font-size: 1.8em;
             font-weight: 800;
             letter-spacing: -0.5px;
             margin-bottom: 12px;
@@ -109,7 +109,7 @@
 
         header p {
             color: var(--text-muted);
-            font-size: 18px;
+            font-size: 0.9em;
             line-height: 1.5;
         }
 
@@ -121,7 +121,7 @@
         }
 
         .area-busca label {
-            font-size: 16px;
+            font-size: 0.85em;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -136,7 +136,7 @@
         input[type="text"] {
             width: 100%;
             padding: 18px 20px;
-            font-size: 18px;
+            font-size: 0.9em;
             color: var(--text-main);
             background-color: #f8fafc;
             border: 2px solid var(--border);
@@ -156,7 +156,7 @@
             background-color: var(--primary);
             color: #ffffff;
             padding: 18px;
-            font-size: 20px;
+            font-size: 1em;
             font-weight: 700;
             border: none;
             border-radius: 12px;
@@ -170,18 +170,14 @@
             transform: translateY(-1px);
         }
 
-        .btn-verificar:active {
-            transform: translateY(0);
-        }
-
-        /* Caixas de Resposta Estilizadas */
+        /* Caixas de Resposta */
         .resultado {
             margin-top: 32px;
             padding: 24px;
             border-radius: 12px;
             border-left: 6px solid;
             transition: all 0.3s ease;
-            font-size: 18px;
+            font-size: 0.9em;
             line-height: 1.6;
         }
 
@@ -210,12 +206,9 @@
         }
 
         .resultado-titulo {
-            font-size: 22px;
+            font-size: 1.1em;
             font-weight: 700;
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .resultado-corpo {
@@ -228,13 +221,13 @@
 
     <!-- Acessibilidade -->
     <div class="acessibilidade">
-        <button class="btn-acessivel" onclick="mudarFonte(2)">A+ Ampliar Texto</button>
-        <button class="btn-acessivel" onclick="mudarFonte(-2)">A- Reduzir Texto</button>
-        <button class="btn-acessivel btn-som" onclick="lerTexto()">🔊 Ouvir Instruções</button>
+        <button type="button" class="btn-acessivel" onclick="mudarFonte(2)">A+ Ampliar Texto</button>
+        <button type="button" class="btn-acessivel" onclick="mudarFonte(-2)">A- Reduzir Texto</button>
+        <button type="button" class="btn-acessivel btn-som" onclick="lerTexto()">🔊 Ouvir Instruções</button>
     </div>
 
     <!-- Bloco Centralizador -->
-    <main class="container">
+    <main class="container" id="container-principal">
         <header>
             <h1>Detetive de Links</h1>
             <p id="texto-instrucao">Cole o endereço do site suspeito abaixo para realizar a varredura e checar a integridade da URL.</p>
@@ -254,14 +247,18 @@
     </main>
 
     <script>
-        // --- JAVASCRIPT BLINDADO CONTRA ERROS ---
         let tamanhoFonteAtual = 20;
 
+        // Função Corrigida: Altera o tamanho diretamente no container e afeta todos os elementos
         function mudarFonte(variacao) {
             tamanhoFonteAtual += variacao;
-            if (tamanhoFonteAtual < 16) tamanhoFonteAtual = 16;
+            if (tamanhoFonteAtual < 14) tamanhoFonteAtual = 14;
             if (tamanhoFonteAtual > 32) tamanhoFonteAtual = 32;
-            document.body.style.fontSize = tamanhoFonteAtual + "px";
+            
+            const container = document.getElementById("container-principal");
+            if (container) {
+                container.style.fontSize = tamanhoFonteAtual + "px";
+            }
         }
 
         function lerTexto() {
@@ -298,52 +295,46 @@
                 return;
             }
 
-            // Ativa Animação Visual de Carregamento Rápido
             divResultado.className = "resultado carregando";
             divResultado.innerHTML = "⏳ Conectando ao servidor remoto e inspecionando metadados da URL...";
 
-            // Simulação de resposta técnica em tempo de execução (1.2s)
             setTimeout(() => {
-                divResultado.className = "resultado"; // Reseta classes
+                divResultado.className = "resultado";
                 
                 const gatilhosPhishing = ["promocao", "premio", "gratis", "urgente", "banco", "atualize", "cpf", "desconto", "ganhe", "sorteio", "vaga", "pix", "futebol", "netflix"];
                 let motivo = "";
                 let suspeito = false;
 
-                // Validação 1: Protocolo de Conexão Criptografada
                 if (!link.startsWith("https://")) {
                     suspeito = true;
-                    motivo = "O site alvo não utiliza criptografia SSL estável (HTTPS). A ausência desse protocolo permite que invasores interceptem logins, senhas e formulários trafegados em tempo real.";
+                    motivo = "O site alvo não utiliza criptografia SSL estável (HTTPS). A ausência desse protocolo permite que invasores interceptem logins e senhas em tempo real.";
                 } else {
-                    // Validação 2: Engenharia Social Baseada em Texto
                     for (let termo of gatilhosPhishing) {
                         if (link.includes(termo)) {
                             suspeito = true;
-                            motivo = `Foi localizado o marcador de alta urgência ou benefício irreal: "${termo}". Golpistas utilizam sistematicamente essas palavras-chave estruturais para burlar filtros humanos e induzir o clique sob forte emoção.`;
+                            motivo = `Foi localizado o marcador de alta urgência ou benefício irreal: "${termo}". Golpistas utilizam essa palavra para induzir o clique por impulso.`;
                             break;
                         }
                     }
                 }
 
-                // Validação 3: Phishing de Marca / Domínio Falsificado (Typosquatting)
                 if (link.includes("mercadolivre") && !link.includes("mercadolivre.com.br")) {
                     suspeito = true;
-                    motivo = "A URL simula a identidade visual e o domínio da marca legítima 'Mercado Livre', contudo aponta para um servidor não homologado. Técnica clara de clonagem de interface para roubo de credenciais.";
+                    motivo = "A URL simula a marca 'Mercado Livre', mas aponta para um servidor não homologado. Técnica clara de clonagem para roubo de contas.";
                 }
 
-                // Renderização dos Resultados e Acionamento por Voz
                 if (suspeito) {
                     divResultado.classList.add("perigoso");
                     divResultado.innerHTML = `
                         <div class="resultado-titulo">🚨 Risco de Fraude Identificado</div>
-                        <div class="resultado-corpo"><strong>Diagnóstico Técnico:</strong> ${motivo} Evite clicar ou fornecer dados neste endereço eletrônico.</div>
+                        <div class="resultado-corpo"><strong>Diagnóstico Técnico:</strong> ${motivo} Evite fornecer dados neste endereço.</div>
                     `;
                     falarResultado("Risco de fraude identificado. Veja o diagnóstico técnico na tela.");
                 } else {
                     divResultado.classList.add("seguro");
                     divResultado.innerHTML = `
                         <div class="resultado-titulo">✅ URL com Padrão Seguro</div>
-                        <div class="resultado-corpo"><strong>Diagnóstico Técnico:</strong> O endereço verificado utiliza criptografia HTTPS ativa e está em conformidade com as diretrizes estruturais de navegação segura em nossa base de dados.</div>
+                        <div class="resultado-corpo"><strong>Diagnóstico Técnico:</strong> O endereço verificado utiliza criptografia HTTPS ativa e está em conformidade com as diretrizes de navegação segura.</div>
                     `;
                     falarResultado("URL com padrão seguro. Diagnóstico concluído.");
                 }
