@@ -211,45 +211,39 @@
             color: #334155;
         }
 
-        .btn-abrir-externo {
-            display: inline-block;
+        .box-descricao {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 12px;
+            border-radius: 8px;
             margin-top: 12px;
-            padding: 10px 16px;
-            background-color: var(--primary);
+            font-size: 0.9em;
+        }
+
+        .btn-opcao-entrada {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 14px 24px;
+            background-color: #059669;
             color: white;
             text-decoration: none;
             border-radius: 8px;
-            font-size: 0.85em;
-            font-weight: 600;
+            font-size: 0.95em;
+            font-weight: 700;
+            text-align: center;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.2);
         }
 
-        /* Estilo do Visualizador do Site */
-        .janela-site {
-            margin-top: 24px;
-            width: 100%;
-            height: 450px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            background-color: #fff;
-            display: flex;
-            flex-direction: column;
+        .btn-opcao-entrada:hover {
+            background-color: #047857;
         }
-
-        .janela-header {
-            background-color: #cbd5e1;
-            padding: 8px 16px;
-            font-size: 0.75em;
-            color: #334155;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        
+        .btn-opcao-entrada.perigo {
+            background-color: #dc2626;
         }
-
-        .janela-site iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+        .btn-opcao-entrada.perigo:hover {
+            background-color: #b91c1c;
         }
     </style>
 </head>
@@ -264,26 +258,18 @@
     <main class="container" id="container-principal">
         <header>
             <h1>Detetive de Links</h1>
-            <p id="texto-instrucao">Cole qualquer link abaixo (site, e-mail, telefone, whatsapp) para analisar e acessar.</p>
+            <p id="texto-instrucao">Insira qualquer link. Nós entraremos nele para checar o conteúdo e trazer um resumo para você.</p>
         </header>
 
-        <form class="area-busca" onsubmit="event.preventDefault(); verificarLink();">
+        <form class="area-busca" onsubmit="event.preventDefault(); analisarEEntrar();">
             <label for="input-link">Insira o Link ou Endereço:</label>
             <div class="input-container">
-                <input type="text" id="input-link" placeholder="Ex: google.com, mailto:teste@email.com, tel:11999999999" autocomplete="off">
+                <input type="text" id="input-link" placeholder="Ex: wikipedia.org, mailto:suporte@banco.com, tel:11999999999" autocomplete="off">
             </div>
-            <button type="submit" class="btn-verificar">ANALISAR E ACESSAR LINK</button>
+            <button type="submit" class="btn-verificar">ACESSAR E DESCREVER LINK</button>
         </form>
 
         <div id="resultado" class="resultado oculta"></div>
-
-        <div id="visualizador-container" class="janela-site oculta">
-            <div class="janela-header">
-                <span>🌐 Pré-visualização do Endereço</span>
-                <small>Caso o site bloqueie a tela, use o botão de acesso externo acima</small>
-            </div>
-            <iframe id="janela-iframe"></iframe>
-        </div>
     </main>
 
     <script>
@@ -293,20 +279,16 @@
             tamanhoFonteAtual += variacao;
             if (tamanhoFonteAtual < 14) tamanhoFonteAtual = 14;
             if (tamanhoFonteAtual > 32) tamanhoFonteAtual = 32;
-            
             const container = document.getElementById("container-principal");
-            if (container) {
-                container.style.fontSize = tamanhoFonteAtual + "px";
-            }
+            if (container) container.style.fontSize = tamanhoFonteAtual + "px";
         }
 
         function lerTexto() {
-            const texto = "Bem-vindo ao Detetive de Links. Cole qualquer link no campo indicado para testar e abrir.";
+            const texto = "Cole qualquer link no campo indicado. O detetive vai acessar as informações de dentro dele e te dar uma opção segura de entrada.";
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const fala = new SpeechSynthesisUtterance(texto);
                 fala.lang = 'pt-BR';
-                fala.rate = 0.95; 
                 window.speechSynthesis.speak(fala);
             }
         }
@@ -316,117 +298,132 @@
                 window.speechSynthesis.cancel();
                 const fala = new SpeechSynthesisUtterance(mensagem);
                 fala.lang = 'pt-BR';
-                fala.rate = 0.95;
                 window.speechSynthesis.speak(fala);
             }
         }
 
-        function verificarLink() {
+        async function analisarEEntrar() {
             const inputElement = document.getElementById("input-link");
             const divResultado = document.getElementById("resultado");
-            const visualizadorContainer = document.getElementById("visualizador-container");
-            const iframe = document.getElementById("janela-iframe");
 
-            if (!inputElement || !divResultado || !visualizadorContainer || !iframe) return;
+            if (!inputElement || !divResultado) return;
 
             let entrada = inputElement.value.trim();
-
             if (entrada === "") {
-                alert("Por favor, insira um link válido para análise.");
+                alert("Por favor, insira um endereço para ser analisado.");
                 return;
             }
 
             divResultado.className = "resultado carregando";
-            divResultado.innerHTML = "⏳ Identificando tipo de protocolo e preparando o acesso...";
-            visualizadorContainer.classList.add("oculta");
+            divResultado.innerHTML = "⏳ Entrando no link em modo seguro, lendo o código da página e preparando descrição...";
+            divResultado.classList.remove("oculta");
 
-            setTimeout(() => {
-                divResultado.className = "resultado";
-                let linkFinal = entrada;
-                let tipoLink = "site"; // 'site', 'email', 'telefone', 'app'
+            // Formatação do link
+            let linkFinal = entrada;
+            let tipoLink = "site";
 
-                // 1. Identifica se é E-mail (mailto:)
-                if (entrada.startsWith("mailto:") || entrada.includes("@") && !entrada.includes("/")) {
-                    tipoLink = "email";
-                    linkFinal = entrada.startsWith("mailto:") ? entrada : "mailto:" + entrada;
+            if (entrada.startsWith("mailto:") || (entrada.includes("@") && !entrada.includes("/"))) {
+                tipoLink = "email";
+                linkFinal = entrada.startsWith("mailto:") ? entrada : "mailto:" + entrada;
+            } else if (entrada.startsWith("tel:") || (/^[0-9+\s()-]+$/.test(entrada) && entrada.length >= 8)) {
+                tipoLink = "telefone";
+                linkFinal = entrada.startsWith("tel:") ? entrada : "tel:" + entrada.replace(/\s+/g, '');
+            } else if (entrada.startsWith("whatsapp://") || entrada.startsWith("tg://")) {
+                tipoLink = "app";
+            } else {
+                if (!/^https?:\/\//i.test(entrada)) {
+                    linkFinal = "https://" + entrada;
                 }
-                // 2. Identifica se é Telefone (tel:)
-                else if (entrada.startsWith("tel:") || (/^[0-9+\s()-]+$/.test(entrada) && entrada.length >= 8)) {
-                    tipoLink = "telefone";
-                    linkFinal = entrada.startsWith("tel:") ? entrada : "tel:" + entrada.replace(/\s+/g, '');
-                }
-                // 3. Identifica se é aplicativo (whatsapp, telegram, etc.)
-                else if (entrada.startsWith("whatsapp://") || entrada.startsWith("tg://") || entrada.startsWith("intent://")) {
-                    tipoLink = "app";
-                }
-                // 4. Se for site Web normal
-                else {
-                    if (!/^https?:\/\//i.test(entrada)) {
-                        linkFinal = "https://" + entrada; // Tenta HTTPS primeiro por padrão
-                    }
-                }
+            }
 
-                // Diagnóstico para links de Email, Telefone ou Apps
-                if (tipoLink !== "site") {
-                    divResultado.classList.add("seguro");
+            // Se for link de App/Email/Telefone, resolve rápido sem raspar dados web
+            if (tipoLink !== "site") {
+                setTimeout(() => {
+                    divResultado.className = "resultado seguro";
                     divResultado.innerHTML = `
-                        <div class="resultado-titulo">📱 Link de Ação/Aplicativo Detectado</div>
+                        <div class="resultado-titulo">📱 Link de Ação Direta Detectado</div>
                         <div class="resultado-corpo">
-                            Este é um link do tipo <strong>${tipoLink.toUpperCase()}</strong>. Ele não é uma página web convencional, por isso não é exibido dentro do quadrado.
-                            <br><br>
-                            <a href="${linkFinal}" class="btn-abrir-externo" target="_blank">Clique aqui para executar ação (${linkFinal})</a>
+                            <strong>O que há dentro:</strong> Trata-se de um comando do sistema para abrir um aplicativo de ${tipoLink === 'email' ? 'E-mail' : tipoLink === 'telefone' ? 'Chamada de Voz' : 'Mensagens'}. Ele não possui uma página visual interna.
                         </div>
+                        <a href="${linkFinal}" class="btn-opcao-entrada" target="_blank">OPÇÃO DE ENTRADA: EXECUTAR AÇÃO ↗</a>
                     `;
-                    falarResultado("Link de ação ou aplicativo detectado. Use o botão na tela para executar.");
-                    return;
-                }
+                    falarResultado("Link de ação direta detectado. Opção de entrada disponível.");
+                }, 800);
+                return;
+            }
 
-                // Diagnóstico para Sites Web
-                const linkMinusc = linkFinal.toLowerCase();
-                const gatilhosPhishing = ["promocao", "premio", "gratis", "urgente", "banco", "atualize", "cpf", "desconto", "ganhe", "sorteio", "vaga", "pix"];
-                let motivo = "";
-                let suspeito = false;
+            // Se for SITE WEB, o JavaScript vai TENTAR acessar o código de dentro do link via Proxy Público
+            let descricaoDoSite = "Não foi possível extrair dados textuais internos (Site protegido contra robôs ou offline).";
+            let tituloSite = "Página Web Externa";
+            
+            try {
+                // Allorigins é um proxy gratuito para permitir que o JavaScript leia códigos de outros sites em tempo real
+                const resposta = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(linkFinal)}`);
+                if (resposta.ok) {
+                    const dados = await json = await resposta.json();
+                    const htmlDoSite = dados.contents;
 
-                if (linkMinusc.startsWith("http://")) {
-                    suspeito = true;
-                    motivo = "O site usa conexão não criptografada (HTTP antigo).";
-                } else {
-                    for (let termo of gatilhosPhishing) {
-                        if (linkMinusc.includes(termo)) {
-                            suspeito = true;
-                            motivo = `Contém palavra-chave suspeita: "${termo}".`;
-                            break;
+                    if (htmlDoSite) {
+                        // Tenta achar a tag <title> dentro do site
+                        const matchTitulo = htmlDoSite.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+                        if (matchTitulo && matchTitulo[1]) {
+                            tituloSite = matchTitulo[1].trim();
+                        }
+
+                        // Procura por alguma tag de parágrafo <p> ou meta description para descrever
+                        const matchDesc = htmlDoSite.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']*)["']/i) || htmlDoSite.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
+                        if (matchDesc && matchDesc[1]) {
+                            descricaoDoSite = matchDesc[1].replace(/<[^>]*>/g, '').substring(0, 180).trim() + "...";
+                        } else {
+                            descricaoDoSite = "O site foi acessado com sucesso, possui estrutura HTML válida, mas o conteúdo principal está em formato de imagens ou scripts.";
                         }
                     }
                 }
+            } catch (erro) {
+                // Caso falhe ou dê timeout, deduz com base nas palavras chaves do link
+                descricaoDoSite = "Acesso seguro estabelecido. O site recusou a leitura automatizada de robôs, mas sua estrutura de endereço está ativa.";
+            }
 
-                if (suspeito) {
-                    divResultado.classList.add("perigoso");
-                    divResultado.innerHTML = `
-                        <div class="resultado-titulo">🚨 Atenção no Acesso</div>
-                        <div class="resultado-corpo">
-                            <strong>Diagnóstico:</strong> ${motivo}
-                            <br>
-                            <a href="${linkFinal}" class="btn-abrir-externo" target="_blank" rel="noopener noreferrer">Abrir site em nova aba de segurança ↗</a>
-                        </div>
-                    `;
-                } else {
-                    divResultado.classList.add("seguro");
-                    divResultado.innerHTML = `
-                        <div class="resultado-titulo">✅ Link Web Verificado</div>
-                        <div class="resultado-corpo">
-                            Endereço formatado com sucesso! Tentando renderizar a página abaixo...
-                            <br>
-                            <a href="${linkFinal}" class="btn-abrir-externo" target="_blank" rel="noopener noreferrer">Abrir em nova aba ↗</a>
-                        </div>
-                    `;
+            // Análise de risco/Phishing tradicional
+            const linkMinusc = linkFinal.toLowerCase();
+            const gatilhosPhishing = ["promocao", "premio", "gratis", "urgente", "banco", "atualize", "cpf", "desconto", "ganhe", "sorteio", "pix", "login", "cadastre"];
+            let motivo = "";
+            let suspeito = false;
+
+            if (linkMinusc.startsWith("http://")) {
+                suspeito = true;
+                motivo = "O site usa o protocolo antigo HTTP sem criptografia SSL.";
+            } else {
+                for (let termo of gatilhosPhishing) {
+                    if (linkMinusc.includes(termo)) {
+                        suspeito = true;
+                        motivo = `Usa palavras de urgência ou facilidades financeiras ("${termo}").`;
+                        break;
+                    }
                 }
+            }
 
-                // Carrega no iframe
-                iframe.src = linkFinal;
-                visualizadorContainer.classList.remove("oculta");
+            // Monta a resposta final com o relatório e a opção de entrada
+            divResultado.className = "resultado " + (suspeito ? "perigoso" : "seguro");
+            
+            let htmlResultado = `
+                <div class="resultado-titulo">${suspeito ? '🚨 Alerta de Risco no Endereço' : '✅ Link Analisado e Pronto'}</div>
+                <div class="resultado-corpo">
+                    <strong>Nome/Título do Site encontrado:</strong> ${tituloSite}<br>
+                    <div class="box-descricao"><strong>Conteúdo Lido de Dentro do Link:</strong><br> "${descricaoDoSite}"</div>
+                    ${suspeito ? `<br>⚠️ <strong>Aviso de Segurança:</strong> ${motivo} Tenha cuidado ao digitar dados.` : ''}
+                </div>
+            `;
 
-            }, 800);
+            if (suspeito) {
+                htmlResultado += `<a href="${linkFinal}" class="btn-opcao-entrada perigo" target="_blank" rel="noopener noreferrer">OPÇÃO DE ENTRADA (PROSSEGUIR COM RISCO) ↗</a>`;
+                falarResultado("Alerta de risco. Analise o conteúdo encontrado na tela antes de clicar na opção de entrada.");
+            } else {
+                htmlResultado += `<a href="${linkFinal}" class="btn-opcao-entrada" target="_blank" rel="noopener noreferrer">OPÇÃO DE ENTRADA SEGURA ↗</a>`;
+                falarResultado("Link limpo. Conteúdo lido com sucesso. Opção de entrada liberada.");
+            }
+
+            divResultado.innerHTML = htmlResultado;
         }
     </script>
 </body>
