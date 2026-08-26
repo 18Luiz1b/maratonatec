@@ -45,7 +45,6 @@
             padding: 24px;
         }
 
-        /* Barra de Acessibilidade Superior */
         .acessibilidade {
             display: flex;
             gap: 12px;
@@ -81,7 +80,6 @@
             background-color: #bbf7d0;
         }
 
-        /* Container Principal */
         .container {
             width: 100%;
             max-width: 750px;
@@ -90,7 +88,7 @@
             border-radius: 20px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border);
-            font-size: 20px; /* Base escalável */
+            font-size: 20px;
             transition: font-size 0.2s ease;
         }
 
@@ -113,7 +111,6 @@
             line-height: 1.5;
         }
 
-        /* Formulário e Input */
         .area-busca {
             display: flex;
             flex-direction: column;
@@ -151,7 +148,6 @@
             box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.15);
         }
 
-        /* Botão de Ação Moderno */
         .btn-verificar {
             background-color: var(--primary);
             color: #ffffff;
@@ -170,7 +166,6 @@
             transform: translateY(-1px);
         }
 
-        /* Caixas de Resposta */
         .resultado {
             margin-top: 32px;
             padding: 24px;
@@ -215,41 +210,58 @@
             font-weight: 400;
             color: #334155;
         }
+
+        /* Estilo do Visualizador do Site */
+        .janela-site {
+            margin-top: 24px;
+            width: 100%;
+            height: 400px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        .janela-site iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Acessibilidade -->
     <div class="acessibilidade">
         <button type="button" class="btn-acessivel" onclick="mudarFonte(2)">A+ Ampliar Texto</button>
         <button type="button" class="btn-acessivel" onclick="mudarFonte(-2)">A- Reduzir Texto</button>
         <button type="button" class="btn-acessivel btn-som" onclick="lerTexto()">🔊 Ouvir Instruções</button>
     </div>
 
-    <!-- Bloco Centralizador -->
     <main class="container" id="container-principal">
         <header>
             <h1>Detetive de Links</h1>
-            <p id="texto-instrucao">Cole o endereço do site suspeito abaixo para realizar a varredura e checar a integridade da URL.</p>
+            <p id="texto-instrucao">Cole o endereço do site abaixo para realizar a varredura e visualizar a página.</p>
         </header>
 
-        <!-- Formulário com Prevenção de Recarregamento -->
         <form class="area-busca" onsubmit="event.preventDefault(); verificarLink();">
             <label for="input-link">Endereço Eletrônico (URL):</label>
             <div class="input-container">
-                <input type="text" id="input-link" placeholder="Ex: https://site-falso-promocao.com" autocomplete="off">
+                <input type="text" id="input-link" placeholder="Ex: site-falso-promocao.com ou http://exemplo.com" autocomplete="off">
             </div>
-            <button type="submit" class="btn-verificar">DISPARAR ANÁLISE TÉCNICA</button>
+            <button type="submit" class="btn-verificar">DISPARAR ANÁLISE E ABRIR SITE</button>
         </form>
 
-        <!-- Painel Dinâmico de Resultados -->
         <div id="resultado" class="resultado oculta"></div>
+
+        <!-- Área onde o site externo será carregado -->
+        <div id="visualizador-container" class="janela-site oculta">
+            <iframe id="janela-iframe" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+        </div>
     </main>
 
     <script>
         let tamanhoFonteAtual = 20;
 
-        // Função Corrigida: Altera o tamanho diretamente no container e afeta todos os elementos
         function mudarFonte(variacao) {
             tamanhoFonteAtual += variacao;
             if (tamanhoFonteAtual < 14) tamanhoFonteAtual = 14;
@@ -262,7 +274,7 @@
         }
 
         function lerTexto() {
-            const texto = "Bem-vindo ao Detetive de Links. Cole o endereço do site no campo indicado e clique no botão azul para saber se ele é seguro.";
+            const texto = "Bem-vindo ao Detetive de Links. Cole o endereço do site no campo indicado e clique no botão azul para analisar e visualizar.";
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const fala = new SpeechSynthesisUtterance(texto);
@@ -285,18 +297,29 @@
         function verificarLink() {
             const inputElement = document.getElementById("input-link");
             const divResultado = document.getElementById("resultado");
+            const visualizadorContainer = document.getElementById("visualizador-container");
+            const iframe = document.getElementById("janela-iframe");
 
-            if (!inputElement || !divResultado) return;
+            if (!inputElement || !divResultado || !visualizadorContainer || !iframe) return;
 
-            const link = inputElement.value.trim().toLowerCase();
+            let linkOriginal = inputElement.value.trim();
 
-            if (link === "") {
+            if (linkOriginal === "") {
                 alert("Por favor, insira uma URL válida para análise.");
                 return;
             }
 
+            // Se o link não começar com http:// ou https://, adiciona http:// automaticamente para aceitar qualquer link
+            let linkFormatado = linkOriginal;
+            if (!/^https?:\/\//i.test(linkFormatado)) {
+                linkFormatado = "http://" + linkFormatado;
+            }
+
+            const linkMinusc = linkFormatado.toLowerCase();
+
             divResultado.className = "resultado carregando";
-            divResultado.innerHTML = "⏳ Conectando ao servidor remoto e inspecionando metadados da URL...";
+            divResultado.innerHTML = "⏳ Conectando ao link e renderizando visualização de segurança...";
+            visualizadorContainer.classList.add("oculta");
 
             setTimeout(() => {
                 divResultado.className = "resultado";
@@ -305,39 +328,45 @@
                 let motivo = "";
                 let suspeito = false;
 
-                if (!link.startsWith("https://")) {
+                // Modificado para aceitar http de forma geral, mas avisar se for inseguro
+                if (linkMinusc.startsWith("http://")) {
                     suspeito = true;
-                    motivo = "O site alvo não utiliza criptografia SSL estável (HTTPS). A ausência desse protocolo permite que invasores interceptem logins e senhas em tempo real.";
+                    motivo = "O site utiliza o protocolo antigo HTTP (sem a criptografia segura HTTPS). Dados enviados nesta página podem ser expostos.";
                 } else {
                     for (let termo of gatilhosPhishing) {
-                        if (link.includes(termo)) {
+                        if (linkMinusc.includes(termo)) {
                             suspeito = true;
-                            motivo = `Foi localizado o marcador de alta urgência ou benefício irreal: "${termo}". Golpistas utilizam essa palavra para induzir o clique por impulso.`;
+                            motivo = `Foi localizado o marcador de alta urgência ou benefício irreal: "${termo}".`;
                             break;
                         }
                     }
                 }
 
-                if (link.includes("mercadolivre") && !link.includes("mercadolivre.com.br")) {
+                if (linkMinusc.includes("mercadolivre") && !linkMinusc.includes("mercadolivre.com.br")) {
                     suspeito = true;
-                    motivo = "A URL simula a marca 'Mercado Livre', mas aponta para um servidor não homologado. Técnica clara de clonagem para roubo de contas.";
+                    motivo = "A URL simula a marca 'Mercado Livre', mas aponta para um servidor externo não homologado.";
                 }
 
                 if (suspeito) {
                     divResultado.classList.add("perigoso");
                     divResultado.innerHTML = `
-                        <div class="resultado-titulo">🚨 Risco de Fraude Identificado</div>
-                        <div class="resultado-corpo"><strong>Diagnóstico Técnico:</strong> ${motivo} Evite fornecer dados neste endereço.</div>
+                        <div class="resultado-titulo">🚨 Alerta de Risco / Insegurança</div>
+                        <div class="resultado-corpo"><strong>Diagnóstico:</strong> ${motivo} Exibindo visualização abaixo com restrições de segurança.</div>
                     `;
-                    falarResultado("Risco de fraude identificado. Veja o diagnóstico técnico na tela.");
+                    falarResultado("Aviso de risco identificado. Veja o diagnóstico na tela.");
                 } else {
                     divResultado.classList.add("seguro");
                     divResultado.innerHTML = `
-                        <div class="resultado-titulo">✅ URL com Padrão Seguro</div>
-                        <div class="resultado-corpo"><strong>Diagnóstico Técnico:</strong> O endereço verificado utiliza criptografia HTTPS ativa e está em conformidade com as diretrizes de navegação segura.</div>
+                        <div class="resultado-titulo">✅ Link Analisado</div>
+                        <div class="resultado-corpo"><strong>Diagnóstico:</strong> Estrutura de link aceitável encontrada. Carregando interface gráfica abaixo...</div>
                     `;
-                    falarResultado("URL com padrão seguro. Diagnóstico concluído.");
+                    falarResultado("Análise concluída. Carregando interface.");
                 }
+
+                // Carrega o link dentro da janela iframe e exibe na tela
+                iframe.src = linkFormatado;
+                visualizadorContainer.classList.remove("oculta");
+
             }, 1200);
         }
     </script>
