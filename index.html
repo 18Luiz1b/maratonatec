@@ -177,7 +177,7 @@
         }
 
         .oculta {
-            display: none;
+            display: none !important;
         }
 
         .carregando {
@@ -211,15 +211,39 @@
             color: #334155;
         }
 
+        .btn-abrir-externo {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 10px 16px;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
         /* Estilo do Visualizador do Site */
         .janela-site {
             margin-top: 24px;
             width: 100%;
-            height: 400px;
+            height: 450px;
             border: 2px solid var(--border);
             border-radius: 12px;
             overflow: hidden;
             background-color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .janela-header {
+            background-color: #cbd5e1;
+            padding: 8px 16px;
+            font-size: 0.75em;
+            color: #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .janela-site iframe {
@@ -240,22 +264,25 @@
     <main class="container" id="container-principal">
         <header>
             <h1>Detetive de Links</h1>
-            <p id="texto-instrucao">Cole o endereço do site abaixo para realizar a varredura e visualizar a página.</p>
+            <p id="texto-instrucao">Cole qualquer link abaixo (site, e-mail, telefone, whatsapp) para analisar e acessar.</p>
         </header>
 
         <form class="area-busca" onsubmit="event.preventDefault(); verificarLink();">
-            <label for="input-link">Endereço Eletrônico (URL):</label>
+            <label for="input-link">Insira o Link ou Endereço:</label>
             <div class="input-container">
-                <input type="text" id="input-link" placeholder="Ex: site-falso-promocao.com ou http://exemplo.com" autocomplete="off">
+                <input type="text" id="input-link" placeholder="Ex: google.com, mailto:teste@email.com, tel:11999999999" autocomplete="off">
             </div>
-            <button type="submit" class="btn-verificar">DISPARAR ANÁLISE E ABRIR SITE</button>
+            <button type="submit" class="btn-verificar">ANALISAR E ACESSAR LINK</button>
         </form>
 
         <div id="resultado" class="resultado oculta"></div>
 
-        <!-- Área onde o site externo será carregado -->
         <div id="visualizador-container" class="janela-site oculta">
-            <iframe id="janela-iframe" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+            <div class="janela-header">
+                <span>🌐 Pré-visualização do Endereço</span>
+                <small>Caso o site bloqueie a tela, use o botão de acesso externo acima</small>
+            </div>
+            <iframe id="janela-iframe"></iframe>
         </div>
     </main>
 
@@ -274,7 +301,7 @@
         }
 
         function lerTexto() {
-            const texto = "Bem-vindo ao Detetive de Links. Cole o endereço do site no campo indicado e clique no botão azul para analisar e visualizar.";
+            const texto = "Bem-vindo ao Detetive de Links. Cole qualquer link no campo indicado para testar e abrir.";
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const fala = new SpeechSynthesisUtterance(texto);
@@ -302,72 +329,104 @@
 
             if (!inputElement || !divResultado || !visualizadorContainer || !iframe) return;
 
-            let linkOriginal = inputElement.value.trim();
+            let entrada = inputElement.value.trim();
 
-            if (linkOriginal === "") {
-                alert("Por favor, insira uma URL válida para análise.");
+            if (entrada === "") {
+                alert("Por favor, insira um link válido para análise.");
                 return;
             }
 
-            // Se o link não começar com http:// ou https://, adiciona http:// automaticamente para aceitar qualquer link
-            let linkFormatado = linkOriginal;
-            if (!/^https?:\/\//i.test(linkFormatado)) {
-                linkFormatado = "http://" + linkFormatado;
-            }
-
-            const linkMinusc = linkFormatado.toLowerCase();
-
             divResultado.className = "resultado carregando";
-            divResultado.innerHTML = "⏳ Conectando ao link e renderizando visualização de segurança...";
+            divResultado.innerHTML = "⏳ Identificando tipo de protocolo e preparando o acesso...";
             visualizadorContainer.classList.add("oculta");
 
             setTimeout(() => {
                 divResultado.className = "resultado";
-                
-                const gatilhosPhishing = ["promocao", "premio", "gratis", "urgente", "banco", "atualize", "cpf", "desconto", "ganhe", "sorteio", "vaga", "pix", "futebol", "netflix"];
+                let linkFinal = entrada;
+                let tipoLink = "site"; // 'site', 'email', 'telefone', 'app'
+
+                // 1. Identifica se é E-mail (mailto:)
+                if (entrada.startsWith("mailto:") || entrada.includes("@") && !entrada.includes("/")) {
+                    tipoLink = "email";
+                    linkFinal = entrada.startsWith("mailto:") ? entrada : "mailto:" + entrada;
+                }
+                // 2. Identifica se é Telefone (tel:)
+                else if (entrada.startsWith("tel:") || (/^[0-9+\s()-]+$/.test(entrada) && entrada.length >= 8)) {
+                    tipoLink = "telefone";
+                    linkFinal = entrada.startsWith("tel:") ? entrada : "tel:" + entrada.replace(/\s+/g, '');
+                }
+                // 3. Identifica se é aplicativo (whatsapp, telegram, etc.)
+                else if (entrada.startsWith("whatsapp://") || entrada.startsWith("tg://") || entrada.startsWith("intent://")) {
+                    tipoLink = "app";
+                }
+                // 4. Se for site Web normal
+                else {
+                    if (!/^https?:\/\//i.test(entrada)) {
+                        linkFinal = "https://" + entrada; // Tenta HTTPS primeiro por padrão
+                    }
+                }
+
+                // Diagnóstico para links de Email, Telefone ou Apps
+                if (tipoLink !== "site") {
+                    divResultado.classList.add("seguro");
+                    divResultado.innerHTML = `
+                        <div class="resultado-titulo">📱 Link de Ação/Aplicativo Detectado</div>
+                        <div class="resultado-corpo">
+                            Este é um link do tipo <strong>${tipoLink.toUpperCase()}</strong>. Ele não é uma página web convencional, por isso não é exibido dentro do quadrado.
+                            <br><br>
+                            <a href="${linkFinal}" class="btn-abrir-externo" target="_blank">Clique aqui para executar ação (${linkFinal})</a>
+                        </div>
+                    `;
+                    falarResultado("Link de ação ou aplicativo detectado. Use o botão na tela para executar.");
+                    return;
+                }
+
+                // Diagnóstico para Sites Web
+                const linkMinusc = linkFinal.toLowerCase();
+                const gatilhosPhishing = ["promocao", "premio", "gratis", "urgente", "banco", "atualize", "cpf", "desconto", "ganhe", "sorteio", "vaga", "pix"];
                 let motivo = "";
                 let suspeito = false;
 
-                // Modificado para aceitar http de forma geral, mas avisar se for inseguro
                 if (linkMinusc.startsWith("http://")) {
                     suspeito = true;
-                    motivo = "O site utiliza o protocolo antigo HTTP (sem a criptografia segura HTTPS). Dados enviados nesta página podem ser expostos.";
+                    motivo = "O site usa conexão não criptografada (HTTP antigo).";
                 } else {
                     for (let termo of gatilhosPhishing) {
                         if (linkMinusc.includes(termo)) {
                             suspeito = true;
-                            motivo = `Foi localizado o marcador de alta urgência ou benefício irreal: "${termo}".`;
+                            motivo = `Contém palavra-chave suspeita: "${termo}".`;
                             break;
                         }
                     }
                 }
 
-                if (linkMinusc.includes("mercadolivre") && !linkMinusc.includes("mercadolivre.com.br")) {
-                    suspeito = true;
-                    motivo = "A URL simula a marca 'Mercado Livre', mas aponta para um servidor externo não homologado.";
-                }
-
                 if (suspeito) {
                     divResultado.classList.add("perigoso");
                     divResultado.innerHTML = `
-                        <div class="resultado-titulo">🚨 Alerta de Risco / Insegurança</div>
-                        <div class="resultado-corpo"><strong>Diagnóstico:</strong> ${motivo} Exibindo visualização abaixo com restrições de segurança.</div>
+                        <div class="resultado-titulo">🚨 Atenção no Acesso</div>
+                        <div class="resultado-corpo">
+                            <strong>Diagnóstico:</strong> ${motivo}
+                            <br>
+                            <a href="${linkFinal}" class="btn-abrir-externo" target="_blank" rel="noopener noreferrer">Abrir site em nova aba de segurança ↗</a>
+                        </div>
                     `;
-                    falarResultado("Aviso de risco identificado. Veja o diagnóstico na tela.");
                 } else {
                     divResultado.classList.add("seguro");
                     divResultado.innerHTML = `
-                        <div class="resultado-titulo">✅ Link Analisado</div>
-                        <div class="resultado-corpo"><strong>Diagnóstico:</strong> Estrutura de link aceitável encontrada. Carregando interface gráfica abaixo...</div>
+                        <div class="resultado-titulo">✅ Link Web Verificado</div>
+                        <div class="resultado-corpo">
+                            Endereço formatado com sucesso! Tentando renderizar a página abaixo...
+                            <br>
+                            <a href="${linkFinal}" class="btn-abrir-externo" target="_blank" rel="noopener noreferrer">Abrir em nova aba ↗</a>
+                        </div>
                     `;
-                    falarResultado("Análise concluída. Carregando interface.");
                 }
 
-                // Carrega o link dentro da janela iframe e exibe na tela
-                iframe.src = linkFormatado;
+                // Carrega no iframe
+                iframe.src = linkFinal;
                 visualizadorContainer.classList.remove("oculta");
 
-            }, 1200);
+            }, 800);
         }
     </script>
 </body>
