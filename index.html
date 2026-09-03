@@ -107,7 +107,7 @@
         }
 
         .hero h1 {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             font-weight: 800;
             color: var(--primary);
             line-height: 1.2;
@@ -420,12 +420,12 @@
         <button type="button" class="btn-acessivel btn-som" onclick="lerTexto()">🔊 Ouvir Instruções</button>
     </div>
 
-    <!-- ENTRADA DO SITE (HERO BANNER) -->
+    <!-- ENTRADA DO SITE COM A CHAMADA EXPLICATIVA -->
     <section class="hero">
         <span class="hero-badge">Maratona Tech 2026</span>
-        <h1>Navegue na Internet com Segurança Total</h1>
-        <p>Sua ferramenta contra golpes virtuais. Verifique links suspeitos instantaneamente e aprenda a se proteger de fraudes online.</p>
-        <a href="#ferramenta" class="btn-hero">Analisar um Link Agora ↓</a>
+        <h1>Te mandaram um link e você está com medo de ser golpe?</h1>
+        <p>Não clique antes de checar! Cole o endereço em nosso analisador para descobrir se a página é segura ou perigosa antes de colocar seus dados em risco.</p>
+        <a href="#ferramenta" class="btn-hero">Analisar Link Agora ↓</a>
     </section>
 
     <!-- DESTAQUES / RECURSOS -->
@@ -463,7 +463,7 @@
             </div>
             <div class="card-idoso">
                 <h4>3. Peça Ajuda a um Familiar</h4>
-                <p>Antes de responder a uma solicitação financeira ou clicar em um link, confirma o assunto com alguém de confiança.</p>
+                <p>Antes de responder a uma solicitação financeira ou clicar em um link, confirme o assunto com alguém de confiança.</p>
             </div>
         </div>
     </section>
@@ -513,7 +513,7 @@
         }
 
         function lerTexto() {
-            const texto = "Bem-vindo ao Detetive de Links. Este site possui orientações de segurança digital para idosos. Para analisar um endereço, role até a caixa de texto, cole a URL e clique no botão azul.";
+            const texto = "Te mandaram um link e você está com medo de ser golpe? Não clique antes de checar. Cole o endereço em nosso analisador para saber se ele é seguro.";
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const fala = new SpeechSynthesisUtterance(texto);
@@ -598,4 +598,4 @@
         }
     </script>
 </body>
-</html>
+</html>.
