@@ -90,7 +90,7 @@
             max-width: 800px;
             text-align: center;
             padding: 40px 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .hero-badge {
@@ -149,7 +149,7 @@
             gap: 16px;
             width: 100%;
             max-width: 800px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .card-recurso {
@@ -177,7 +177,60 @@
             line-height: 1.4;
         }
 
-        /* Container Principal */
+        /* Seção: Segurança Digital para Idosos */
+        .secao-idosos {
+            width: 100%;
+            max-width: 800px;
+            background: #eff6ff;
+            border: 2px solid #bfdbfe;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 35px;
+        }
+
+        .secao-idosos h2 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .secao-idosos p {
+            font-size: 0.95rem;
+            color: #1e3a8a;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .grid-idosos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 12px;
+        }
+
+        .card-idoso {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid #dbeafe;
+        }
+
+        .card-idoso h4 {
+            color: var(--primary);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .card-idoso p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+
+        /* Container Principal da Ferramenta */
         .container {
             width: 100%;
             max-width: 800px;
@@ -394,6 +447,27 @@
         </div>
     </section>
 
+    <!-- SEÇÃO: SEGURANÇA DIGITAL PARA IDOSOS -->
+    <section class="secao-idosos">
+        <h2>👴👵 Segurança Digital para Idosos</h2>
+        <p>A tecnologia nos conecta com quem amamos, mas exige atenção extra. Golpistas costumam utilizar a urgência e promessas irrealistas para enganar quem tem menos familiaridade com a internet.</p>
+        
+        <div class="grid-idosos">
+            <div class="card-idoso">
+                <h4>1. Cuidado com Mensagens Urgentes</h4>
+                <p>Se alguém pedir dinheiro com urgência pelo WhatsApp ou falar sobre bloqueio de benefício, desconfie na hora.</p>
+            </div>
+            <div class="card-idoso">
+                <h4>2. Não Clique em Links Desconhecidos</h4>
+                <p>Mensagens prometendo prêmios, sorteios ou atualizações de banco costumam conter endereços falsos.</p>
+            </div>
+            <div class="card-idoso">
+                <h4>3. Peça Ajuda a um Familiar</h4>
+                <p>Antes de responder a uma solicitação financeira ou clicar em um link, confirma o assunto com alguém de confiança.</p>
+            </div>
+        </div>
+    </section>
+
     <!-- FERRAMENTA PRINCIPAL -->
     <main class="container" id="ferramenta">
         <header>
@@ -439,7 +513,7 @@
         }
 
         function lerTexto() {
-            const texto = "Bem-vindo ao Detetive de Links. Role até a caixa de texto, cole o endereço do site e clique no botão para saber se ele é seguro.";
+            const texto = "Bem-vindo ao Detetive de Links. Este site possui orientações de segurança digital para idosos. Para analisar um endereço, role até a caixa de texto, cole a URL e clique no botão azul.";
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const fala = new SpeechSynthesisUtterance(texto);
