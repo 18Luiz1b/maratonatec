@@ -34,6 +34,10 @@
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: var(--bg-global);
             color: var(--text-main);
@@ -41,7 +45,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             padding: 24px;
         }
 
@@ -52,7 +55,7 @@
             justify-content: center;
             margin-bottom: 24px;
             width: 100%;
-            max-width: 750px;
+            max-width: 800px;
         }
 
         .btn-acessivel {
@@ -81,10 +84,103 @@
             background-color: #bbf7d0;
         }
 
+        /* Hero Banner / Entrada do Site */
+        .hero {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+
+        .hero-badge {
+            background-color: #dbeafe;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto 28px auto;
+            line-height: 1.6;
+        }
+
+        .btn-hero {
+            background-color: var(--primary);
+            color: #ffffff;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 14px rgba(30, 64, 175, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-hero:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Cartões de Funcionalidades */
+        .recursos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+
+        .card-recurso {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .card-recurso-icone {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .card-recurso h3 {
+            font-size: 1rem;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .card-recurso p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
         /* Container Principal */
         .container {
             width: 100%;
-            max-width: 750px;
+            max-width: 800px;
             background: var(--card-bg);
             padding: 40px;
             border-radius: 20px;
@@ -99,9 +195,9 @@
             margin-bottom: 28px;
         }
 
-        header h1 {
+        header h2 {
             color: var(--primary);
-            font-size: 1.8em;
+            font-size: 1.6em;
             font-weight: 800;
             letter-spacing: -0.5px;
             margin-bottom: 12px;
@@ -113,7 +209,7 @@
             line-height: 1.5;
         }
 
-        /* Guia Explicativo Rápidos: O que fazer */
+        /* Guia Explicativo */
         .guia-explicativo {
             background-color: #f1f5f9;
             border: 1px solid #cbd5e1;
@@ -123,13 +219,10 @@
             font-size: 0.8em;
         }
 
-        .guia-explicativo h2 {
+        .guia-explicativo h3 {
             font-size: 1em;
             color: var(--primary);
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .guia-explicativo ul {
@@ -180,7 +273,7 @@
             box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.15);
         }
 
-        /* Botão de Ação Moderno */
+        /* Botão de Ação */
         .btn-verificar {
             background-color: var(--primary);
             color: #ffffff;
@@ -245,7 +338,6 @@
             margin-bottom: 16px;
         }
 
-        /* Botão de Denúncia */
         .btn-denunciar {
             background-color: #dc2626;
             color: #ffffff;
@@ -268,27 +360,54 @@
 </head>
 <body>
 
-    <!-- Acessibilidade -->
+    <!-- Barra de Acessibilidade -->
     <div class="acessibilidade">
         <button type="button" class="btn-acessivel" onclick="mudarFonte(2)">A+ Ampliar Texto</button>
         <button type="button" class="btn-acessivel" onclick="mudarFonte(-2)">A- Reduzir Texto</button>
         <button type="button" class="btn-acessivel btn-som" onclick="lerTexto()">🔊 Ouvir Instruções</button>
     </div>
 
-    <!-- Bloco Centralizador -->
-    <main class="container" id="container-principal">
+    <!-- ENTRADA DO SITE (HERO BANNER) -->
+    <section class="hero">
+        <span class="hero-badge">Maratona Tech 2026</span>
+        <h1>Navegue na Internet com Segurança Total</h1>
+        <p>Sua ferramenta contra golpes virtuais. Verifique links suspeitos instantaneamente e aprenda a se proteger de fraudes online.</p>
+        <a href="#ferramenta" class="btn-hero">Analisar um Link Agora ↓</a>
+    </section>
+
+    <!-- DESTAQUES / RECURSOS -->
+    <section class="recursos">
+        <div class="card-recurso">
+            <div class="card-recurso-icone">⚡</div>
+            <h3>Análise Rápida</h3>
+            <p>Varredura instantânea de estruturas de endereços e protocolos HTTPS.</p>
+        </div>
+        <div class="card-recurso">
+            <div class="card-recurso-icone">🛡️</div>
+            <h3>Prevenção de Golpes</h3>
+            <p>Detecta falsificações de marcas conhecidas e palavras apelativas.</p>
+        </div>
+        <div class="card-recurso">
+            <div class="card-recurso-icone">📢</div>
+            <h3>Canal de Denúncia</h3>
+            <p>Notifique links fraudulentos para ajudar a proteger outros usuários.</p>
+        </div>
+    </section>
+
+    <!-- FERRAMENTA PRINCIPAL -->
+    <main class="container" id="ferramenta">
         <header>
-            <h1>Detetive de Links</h1>
+            <h2>Detetive de Links</h2>
             <p id="texto-instrucao">Cole o endereço do site suspeito abaixo para realizar a varredura e checar a integridade da URL.</p>
         </header>
 
-        <!-- Explicação Integrada: O que fazer -->
+        <!-- Explicação Integrada -->
         <section class="guia-explicativo">
-            <h2>💡 O que fazer se receber um link suspeito?</h2>
+            <h3>💡 O que fazer se receber um link suspeito?</h3>
             <ul>
-                <li><strong>Não clique imediatamente:</strong> Respire e observe o endereço antes de qualquer ação.</li>
+                <li><strong>Não clique imediatamente:</strong> Observe o endereço antes de qualquer ação.</li>
                 <li><strong>Nunca informe dados sensíveis:</strong> Sites legítimos não pedem senhas ou CPF via mensagens.</li>
-                <li><strong>Valide no canal oficial:</strong> Se a mensagem for sobre um banco ou loja, acesse diretamente o app ou site oficial da empresa.</li>
+                <li><strong>Valide no canal oficial:</strong> Acesse diretamente o site oficial da empresa ou banco.</li>
             </ul>
         </section>
 
@@ -301,7 +420,7 @@
             <button type="submit" class="btn-verificar">DISPARAR ANÁLISE TÉCNICA</button>
         </form>
 
-        <!-- Painel Dinâmico de Resultados -->
+        <!-- Painel de Resultados -->
         <div id="resultado" class="resultado oculta"></div>
     </main>
 
@@ -313,14 +432,14 @@
             if (tamanhoFonteAtual < 14) tamanhoFonteAtual = 14;
             if (tamanhoFonteAtual > 32) tamanhoFonteAtual = 32;
             
-            const container = document.getElementById("container-principal");
+            const container = document.getElementById("ferramenta");
             if (container) {
                 container.style.fontSize = tamanhoFonteAtual + "px";
             }
         }
 
         function lerTexto() {
-            const texto = "Bem-vindo ao Detetive de Links. Cole o endereço do site no campo indicado e clique no botão azul para saber se ele é seguro. Veja também no topo o guia sobre o que fazer ao receber um link suspeito.";
+            const texto = "Bem-vindo ao Detetive de Links. Role até a caixa de texto, cole o endereço do site e clique no botão para saber se ele é seguro.";
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const fala = new SpeechSynthesisUtterance(texto);
